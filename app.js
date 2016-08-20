@@ -7,6 +7,9 @@
     var cookieParser = require('cookie-parser');
     var bodyParser = require('body-parser');
 
+    var logntice = require("./log.js");
+    var appConfig = require("./config.json");
+
     var app = express();
     var server = require('http').createServer(app);
 
@@ -16,7 +19,7 @@
     app.set('view engine', 'html');
 
     app.use(logger('dev'));
-    app.use(bodyParser.json());
+    app.use(bodyParser.json({limit: ''+appConfig.jsonBodyLimit+'mb'}));
     app.use(bodyParser.urlencoded({
         extended: true
     }));
@@ -35,11 +38,17 @@
 
     initSeatNotice(app);
 
-    app.set('port', process.env.PORT || 3000);
+    app.set('port', process.env.PORT || appConfig.restServicePort);
 
     server.listen(app.get('port'), function () {
         console.log('Express server listening on port ' + server.address().port);
     });
+
+    process.on("uncaughtException", function (err) {
+        console.log(err);
+        console.log(err.stack);
+    });
+
 
     /**
      *  初始化席位通知组件
@@ -51,12 +60,14 @@
 
         var messageHub = initMessageHub();
 
-        var wsio=initWsHub(messageHub);
+        var wsio = initWsHub(messageHub);
 
-        var connManager = initStatusConnection(messageHub,wsio);
+        var connManager = initStatusConnection(messageHub, wsio);
         var statusIns = new statusService.StatusRest(connManager);
-        var messageIns = new messageService.MessageRest(messageHub, connManager);
-
+        var messageIns = new messageService.MessageRest(messageHub, connManager,wsio);
+        if (appConfig.broadcastWhenStart) {
+            connManager.refreshAllClient();
+        }
         app.use('/status', statusIns.router);
         app.use('/message', messageIns.router);
 
@@ -66,10 +77,11 @@
      * 实例化连接管理器
      * @returns {ConnectionManager|*}
      */
-    function initStatusConnection(messageHub,wsio) {
+    function initStatusConnection(messageHub, wsio) {
         var client = require("./seatnotice/ConnectionManager.js");
-        var conn = new client.ConnectionManager(messageHub,wsio);
+        var conn = new client.ConnectionManager(messageHub, wsio);
         conn.initReceive();
+        conn.initTCPReceive();
         return conn;
     }
 
@@ -88,11 +100,11 @@
      * @param messageHub
      * @returns {*}
      */
-    function initWsHub(messageHub)
-    {
+    function initWsHub(messageHub) {
         var websocketHost = require("./seatnotice/WebsocketNWHost.js");
         var wsHost = new websocketHost.WebsocketNWHost(server, messageHub);
         return wsHost.initSocket();
     }
+
     module.exports = app;
 }());

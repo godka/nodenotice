@@ -7,15 +7,23 @@ export enum MessageType{
      */
     OnlineRegister,
     /**
+     * 回复注册
+     */
+    ReplyRegister,
+    /**
      * 下线
      */
     DisConnect,
     /**
      * 修改属性
      */
-    UpdateProperty,
+    UpdateClientInfo,
     /**
      * 自定义消息发送
      */
-    CustomMessage
+    CustomMessage,
+    /**
+     * 请求响应状态数据
+     */
+    RequestStatusReply
 }

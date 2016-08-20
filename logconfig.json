@@ -1,0 +1,14 @@
+{
+  "appenders": [
+    {
+      "type": "file",
+      "filename": "notice.log",
+      "category": [ "notice","console" ]
+    },
+    {
+      "type": "console"
+    }
+  ],
+  "replaceConsole": true,
+  "levels":{"notice": "INFO"}
+}
