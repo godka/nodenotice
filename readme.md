@@ -3,7 +3,7 @@
 1. 完全的P2P版本，没有服务器。 
 2. 跨端，支持windows、linux。
 3. 使用nodejs为宿主。  使用了udp（p2p消息传递）、express rest服务（提供api供业务软件使用）、websocket（回调业务软件方法）  
-4. 目前消息只支持64k以内数据。  
+
 
 ### 1.环境安装
 #### A、本地安装node  
