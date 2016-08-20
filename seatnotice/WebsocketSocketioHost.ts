@@ -22,26 +22,19 @@ export class WebsocketSocketioHost {
         var _messageHub = this.messageHub;
         _io.on('connection', function (socket) {
             console.log('user connected');
-            //test messsage
-            _io.emit({
-                "CallbackId": "123",
-                "Hub": "TestHub",
-                "Method": "OnGetTestMessage",
-                "Args": [{"MessageId": 11, "MessageName": "nametest1"}]
-            });
             socket.on('message', function(message){
                 console.log("Received message: " + message + " - from client " + socket.id);
             });
             socket.on('disconnect', function () {
-
                 //发送下线消息,接受消息时会自动获取发送端ip，所以无需赋值
-                var clientInfo = new ClientInfo("", "", "0", "");
-                _messageHub.disconnectClient(clientInfo);
-                console.log('user disconnected');
+                //var clientInfo = new ClientInfo("", "", "0", "");
+                //_messageHub.disconnectClient(clientInfo);
+                //console.log('user disconnected');
             });
         });
         return this.io;
     }
+
 
     sendMsgToClient(msg:any) {
         this.io.emit(msg);

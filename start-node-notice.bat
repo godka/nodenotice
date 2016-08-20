@@ -1,0 +1,1 @@
+node %cd%\app.js

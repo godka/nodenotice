@@ -30,4 +30,5 @@ export class MessageInfo {
     messageJsonString() {
         return JSON.stringify(this);
     }
+
 }

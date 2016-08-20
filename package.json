@@ -1,10 +1,12 @@
 {
-  "name": "noticeApp",
+  "name": "nodeNoticeAppHost",
   "version": "0.0.1",
   "description": "A seat notice app host",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install-windows-service": "winser -i -a -s",
+    "uninstall-windows-service": "winser -r -x -s"
   },
   "author": "xiaodm",
   "license": "no",
@@ -15,18 +17,20 @@
     "ejs": "^1.0.0",
     "express": "^4.8.5",
     "forever": "^0.11.1",
+    "log4js": "^0.6.38",
     "morgan": "^1.2.3",
-    "socket.io": "^1.4.8",
-    "nodejs-websocket":"^1.6.0"
+    "nodejs-websocket": "^1.6.0",
+    "socket.io": "^1.4.8"
   },
   "devDependencies": {
     "gulp": "^3.8.7",
     "gulp-jshint": "^1.8.4",
     "gulp-livereload": "^2.1.1",
     "gulp-nodemon": "^1.0.4",
-    "gulp-watch": "^0.6.9"
+    "gulp-watch": "^0.6.9",
+    "winser": "1.0.2"
   },
   "engines": {
-    "node": "4.3.1"
+    "node": "5.5.0"
   }
 }

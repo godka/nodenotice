@@ -17,6 +17,19 @@ var Util = (function () {
         }
         return '0.0.0.0';
     };
+    Util.succeed = function (result) {
+        var returnBase = { data: null, success: null };
+        returnBase.data = result;
+        returnBase.success = true;
+        return returnBase;
+    };
+    Util.error = function (errorMsg) {
+        var returnBase = { data: null, success: null, error: null };
+        returnBase.data = false;
+        returnBase.success = false;
+        returnBase.error = { code: 99901, message: errorMsg };
+        return returnBase;
+    };
     return Util;
 }());
 exports.Util = Util;

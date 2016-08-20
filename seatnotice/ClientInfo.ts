@@ -6,11 +6,18 @@ export class ClientInfo {
     port:string;
     name:string;
     registerInfo:any;
+    isTestClient:boolean;
 
-    constructor(name:string, ip:string, port:string, registerInfo:any) {
+    constructor(name:string, ip:string, port:string, registerInfo:any, isTestClient?:boolean) {
         this.name = name;
         this.ip = ip;
         this.port = port;
         this.registerInfo = registerInfo;
+        if (isTestClient) {
+            this.isTestClient = isTestClient;
+        }
+        else {
+            this.isTestClient = false;
+        }
     }
 }

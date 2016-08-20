@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/css/style.css" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/js/app.js" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/js/controllers/chat.js" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/js/controllers/chatlist.js" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/js/controllers/login.js" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/js/factorys/chat.js" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/js/factorys/record.js" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/js/factorys/usermsgs.js" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/js/factorys/util.js" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/js/factorys/wsocket.js" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/templates/login.html" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/templates/tab-chatlist.html" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/templates/tab-chats.html" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/templates/tabs.html" charset="UTF-8" />
+    <file url="file://D:/IonicCordovaChatApp/myApp/www/testhtml.html" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>
