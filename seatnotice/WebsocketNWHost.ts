@@ -45,7 +45,7 @@ export class WebsocketNWHost {
             conn.on("close", function (code, reason) {
                 //发送下线消息,接受消息时会自动获取发送端ip，所以无需赋值
                 var clientInfo = new ClientInfo("", "", "0", "");
-                _messageHub.disconnectClient(clientInfo);
+                _messageHub.disconnectClientAndLog(clientInfo);
                 console.log('user disconnected');
             });
             conn.on("error", function (error) {
@@ -57,12 +57,12 @@ export class WebsocketNWHost {
 
         server.on("close", function () {
             var clientInfo = new ClientInfo("", "", "0", "");
-            _messageHub.disconnectClient(clientInfo);
+            _messageHub.disconnectClientAndLog(clientInfo);
         });
 
         process.on("exit", function (code) {
             var clientInfo = new ClientInfo("", "", "0", "");
-            _messageHub.disconnectClient(clientInfo);
+            _messageHub.disconnectClientAndLog(clientInfo);
         });
 
         return server;

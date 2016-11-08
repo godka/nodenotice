@@ -5,16 +5,12 @@
 import {ClientInfo} from "./ClientInfo";
 import {MessageBody} from "./MessageBody";
 import {MessageType} from "./MessageType";
-
+import {Util} from "./Util";
+import {Clients} from "./Clients";
 import udp = require("dgram");
 import portConfig = require("../config.json");
 
 export class MessageFactory {
-
-    //客户端列表
-    listClient:Array<ClientInfo> = [];
-
-    udpClient:any;
 
 
     /**
@@ -22,6 +18,9 @@ export class MessageFactory {
      */
     registerClient(clientInfo:ClientInfo) {
         this.sendBroadCastMessage(MessageType.OnlineRegister, clientInfo);
+        if (portConfig.EnableNoticeConnectStatusToBusiness) {
+            this.sendConnectStatusToBusinessServer(clientInfo,1);
+        }
     }
 
 
@@ -31,6 +30,17 @@ export class MessageFactory {
     disconnectClient(clientInfo:ClientInfo) {
         this.sendBroadCastMessage(MessageType.DisConnect, clientInfo);
     }
+
+    /**
+     * 广播当前客户端下线信息
+     */
+    disconnectClientAndLog(clientInfo:ClientInfo) {
+        this.sendBroadCastMessage(MessageType.DisConnect, clientInfo);
+        if (portConfig.EnableNoticeConnectStatusToBusiness) {
+            this.sendConnectStatusToBusinessServer(clientInfo,0);
+        }
+    }
+
 
     /**
      * 广播当前客户端注册信息
@@ -54,16 +64,19 @@ export class MessageFactory {
                 udpClient.setBroadcast(true);
             });
             console.log("msgBuffer.length:" + msgBuffer.length);
-            udpClient.send(msgBuffer, 0, msgBuffer.length, portConfig.broadcastPort, portConfig.broadcastIp, function (err, bytes) {
-                if (err) {
-                    console.log(err);
-                }
-            });
+            if (!portConfig.noBroadcastCurrentNetworkSegment) {
+                udpClient.send(msgBuffer, 0, msgBuffer.length, portConfig.broadcastPort, portConfig.broadcastIp, function (err, bytes) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
 
             let otherIps:string[] = this.getOtherBroadcastIps();
             if (otherIps.length > 0) {
                 this.sendMessageByIps(otherIps, messageType, messageContent);
             }
+
         } catch (e) {
             console.log(e);
         }
@@ -133,6 +146,40 @@ export class MessageFactory {
         }
     }
 
+
+    sendConnectStatusToBusinessServer(clientInfo:ClientInfo, type:number) {
+        let bsUrl:string = portConfig.BusinessConnectServerUrl;
+        if (!bsUrl) {
+            console.log("can not find EnableNoticeConnectStatusToBusiness config from config.json");
+            return;
+        }
+        if (type == 0) {
+            //logout
+            let currentClientIp = Util.getIPAddress();
+            clientInfo.ip = currentClientIp;
+            let cInfo = Clients.listClient.filter(function (item) {
+                return item.ip == currentClientIp;
+            });
+
+            if (cInfo && cInfo.length > 0) {
+                clientInfo = cInfo[0];
+            }
+        }
+
+        // the best way  is only send registerInfo to business, but now hard code below:::
+        var statusData = {
+            personInfoId: clientInfo.registerInfo.orgPersonId,
+            personInfoName: clientInfo.registerInfo.orgPersonName,
+            type: type,
+            centerCode: clientInfo.registerInfo.centerCode,
+            roleId: clientInfo.registerInfo.roleId,
+            seatId: clientInfo.registerInfo.seatId
+        };
+
+        //Util.postData(host, port, path, statusData);
+        Util.postDataByRequest(portConfig.BusinessConnectServerUrl,statusData);
+    }
+
     private getOtherBroadcastIps():string[] {
         let ips = [];
         let configOther:any[] = portConfig.otherBroadcastIps;
@@ -140,6 +187,10 @@ export class MessageFactory {
             for (var i = 0; i < configOther.length; i++) {
                 ips = ips.concat(this.getIpsByLastScope(configOther[i].start, configOther[i].end));
             }
+        }
+        let otherSpecifiedIps:any[] = portConfig.otherBroadcastSpecifiedIps;
+        if (otherSpecifiedIps && otherSpecifiedIps.length > 0) {
+            ips = ips.concat(otherSpecifiedIps);
         }
         return ips;
     }

@@ -1,13 +1,13 @@
 "use strict";
+var ClientInfo_1 = require("./ClientInfo");
 var MessageType_1 = require("./MessageType");
 var Util_1 = require("./Util");
+var Clients_1 = require("./Clients");
 var udp = require("dgram");
 var net = require("net");
 var portConfig = require("../config.json");
 var ConnectionManager = (function () {
     function ConnectionManager(messageHub, socketio) {
-        //客户端列表
-        this.listClient = [];
         this.messageHub = messageHub;
         this.socketio = socketio;
         this.currentClientIp = Util_1.Util.getIPAddress();
@@ -92,7 +92,7 @@ var ConnectionManager = (function () {
             this.registerClientInfo(messageInfo, rinfo);
         }
         if (messageInfo.messageType == MessageType_1.MessageType.RequestStatusReply) {
-            this.replyCurrentInfo(rinfo);
+            this.replyCurrentInfo(messageInfo, rinfo);
         }
         if (messageInfo.messageType == MessageType_1.MessageType.UpdateClientInfo) {
             this.updateClientInfo(messageInfo, rinfo);
@@ -121,23 +121,28 @@ var ConnectionManager = (function () {
      * @returns {Array<ClientInfo>}
      */
     ConnectionManager.prototype.getAllClient = function () {
-        return this.listClient;
+        return Clients_1.Clients.listClient;
     };
     /**
      * 刷新连接数据,先清空，再发送广播消息，待对方回应
      */
     ConnectionManager.prototype.refreshAllClient = function () {
+        var curInfo;
         this.checkCurrentIp();
         var tempCurrentIp = this.currentClientIp;
-        var cInfo = this.listClient.filter(function (item) {
+        var cInfos = Clients_1.Clients.listClient.filter(function (item) {
             return item.ip == tempCurrentIp;
         });
-        this.listClient = [];
-        if (cInfo && cInfo.length > 0) {
-            this.listClient.push(cInfo[0]);
+        Clients_1.Clients.listClient = [];
+        if (cInfos && cInfos.length > 0) {
+            curInfo = cInfos[0];
+            Clients_1.Clients.listClient.push(cInfos[0]);
+        }
+        else {
+            curInfo = new ClientInfo_1.ClientInfo("", Util_1.Util.getIPAddress(), "0", "");
         }
         //var clientInfo = new ClientInfo("", "0", "0", "");
-        this.messageHub.sendBroadCastMessage(MessageType_1.MessageType.RequestStatusReply, cInfo);
+        this.messageHub.sendBroadCastMessage(MessageType_1.MessageType.RequestStatusReply, curInfo);
         return true;
     };
     /**
@@ -145,7 +150,7 @@ var ConnectionManager = (function () {
      * @returns {Array<any>}
      */
     ConnectionManager.prototype.getAllRegisterInfos = function () {
-        return this.listClient.map(function (item, index) {
+        return Clients_1.Clients.listClient.map(function (item, index) {
             return item.registerInfo;
         });
     };
@@ -156,7 +161,7 @@ var ConnectionManager = (function () {
      * @param isRegisterInfoPro 是否为自定义的RegisterInfo内属性
      */
     ConnectionManager.prototype.getClientByCondition = function (proNames, proArrayValues, isRegisterInfoPro) {
-        return this.listClient.filter(function (item) {
+        return Clients_1.Clients.listClient.filter(function (item) {
             var match = false;
             for (var i = 0; i < proNames.length; i++) {
                 var proValues = proArrayValues[i].split(",");
@@ -195,21 +200,27 @@ var ConnectionManager = (function () {
      */
     ConnectionManager.prototype.addClientToList = function (clientInfo, rinfo) {
         if (!clientInfo.isTestClient) {
-            clientInfo.ip = rinfo.address;
+            if (!clientInfo.ip) {
+                clientInfo.ip = rinfo.address;
+            }
             clientInfo.port = rinfo.port;
         }
+        /* if (portConfig.useConnectionIdAsIp && clientInfo.registerInfo.connectionId) {
+             clientInfo.ip = clientInfo.registerInfo.connectionId;
+         }*/
+        clientInfo.registerInfo.connectionId = clientInfo.ip;
         var hasi = -1;
-        for (var i = 0; i < this.listClient.length; i++) {
-            if (this.listClient[i].ip == clientInfo.ip) {
+        for (var i = 0; i < Clients_1.Clients.listClient.length; i++) {
+            if (Clients_1.Clients.listClient[i].ip == clientInfo.ip) {
                 hasi = i;
                 break;
             }
         }
         if (hasi > -1) {
-            this.listClient.splice(hasi, 1, clientInfo);
+            Clients_1.Clients.listClient.splice(hasi, 1, clientInfo);
         }
         else {
-            this.listClient.push(clientInfo);
+            Clients_1.Clients.listClient.push(clientInfo);
         }
     };
     /**
@@ -245,11 +256,11 @@ var ConnectionManager = (function () {
             if (messageType == MessageType_1.MessageType.OnlineRegister) {
                 if (!clientInfo.isTestClient) {
                     //发送当前客户端信息给注册者
-                    for (var i = 0; i < this.listClient.length; i++) {
-                        if (this.listClient[i].ip == this.currentClientIp) {
-                            // send this.listClient[i]  to  clientInfo.ip
+                    for (var i = 0; i < Clients_1.Clients.listClient.length; i++) {
+                        if (Clients_1.Clients.listClient[i].ip == this.currentClientIp) {
+                            // send Clients.listClient[i]  to  clientInfo.ip
                             var targetIps = [clientInfo.ip];
-                            this.messageHub.sendMessageByIps(targetIps, MessageType_1.MessageType.ReplyRegister, this.listClient[i]);
+                            this.messageHub.sendMessageByIps(targetIps, MessageType_1.MessageType.ReplyRegister, Clients_1.Clients.listClient[i]);
                             break;
                         }
                     }
@@ -280,14 +291,19 @@ var ConnectionManager = (function () {
      * 回复当前客户端信息
      * @param rinfo
      */
-    ConnectionManager.prototype.replyCurrentInfo = function (rinfo) {
+    ConnectionManager.prototype.replyCurrentInfo = function (messageInfo, rinfo) {
         this.checkCurrentIp();
+        var clientInfo = messageInfo.message;
+        if (clientInfo && clientInfo.ip) {
+            rinfo.address = clientInfo.ip;
+            console.log("replyCurrentInfo set rinfo.address to clientInfo.ip:" + clientInfo.ip);
+        }
         //发送当前客户端信息给注册者
-        for (var i = 0; i < this.listClient.length; i++) {
-            if (this.listClient[i].ip == this.currentClientIp) {
-                // send this.listClient[i]  to  clientInfo.ip
+        for (var i = 0; i < Clients_1.Clients.listClient.length; i++) {
+            if (Clients_1.Clients.listClient[i].ip == this.currentClientIp) {
+                // send Clients.listClient[i]  to  clientInfo.ip
                 var targetIps = [rinfo.address];
-                this.messageHub.sendMessageByIps(targetIps, MessageType_1.MessageType.ReplyRegister, this.listClient[i]);
+                this.messageHub.sendMessageByIps(targetIps, MessageType_1.MessageType.ReplyRegister, Clients_1.Clients.listClient[i]);
                 break;
             }
         }
@@ -298,14 +314,14 @@ var ConnectionManager = (function () {
      */
     ConnectionManager.prototype.disconnectClientInfo = function (rinfo) {
         var hasi = [];
-        for (var i = 0; i < this.listClient.length; i++) {
-            if (this.listClient[i].ip == rinfo.address) {
+        for (var i = 0; i < Clients_1.Clients.listClient.length; i++) {
+            if (Clients_1.Clients.listClient[i].ip == rinfo.address) {
                 hasi.push(i);
             }
         }
         if (hasi.length > 0) {
             for (var i = 0; i < hasi.length; i++) {
-                this.listClient.splice(hasi[i], 1);
+                Clients_1.Clients.listClient.splice(hasi[i], 1);
             }
         }
         if (rinfo.address != this.currentClientIp) {

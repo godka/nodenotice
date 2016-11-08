@@ -4,7 +4,11 @@
   "broadcastPort": 16666,
   "broadcastIp": "255.255.255.255",
   "broadcastWhenStart": true,
-  "otherBroadcastIps":[{"start":"172.18.24.0","end":"172.18.24.255"}],
-  "jsonBodyLimit":"10",
-  "tcpServerPort":3002
+  "noBroadcastCurrentNetworkSegment": false,
+  "otherBroadcastIps":[{"start":"172.18.24.0","end":"172.18.24.255"},{"start":"172.18.7.0","end":"172.18.7.10"}],
+  "otherBroadcastSpecifiedIps":[],
+  "tcpServerPort":3002,
+  "EnableNoticeConnectStatusToBusiness":true,
+  "BusinessConnectServerUrl":"http://172.18.24.221:8080/synthesize/loginout/addLogInOut",
+  "jsonBodyLimit":"10"
 }

@@ -8,6 +8,7 @@ import {MessageType} from "../seatnotice/MessageType";
 import {ConnectionManager} from "../seatnotice/ConnectionManager";
 import {MessageFactory} from "../seatnotice/MessageFactory";
 import {Util} from "../seatnotice/Util";
+import {Clients} from "../seatnotice/Clients";
 import express = require("express");
 
 
@@ -33,6 +34,12 @@ export class MessageRest {
          * post body为ClientInfo
          */
         this.router.post('/registerClient', function (req, res) {
+            //clean all clients before register
+            Clients.listClient = [];
+            if(!req.body.ip)
+            {
+                req.body.ip=Util.getIPAddress();
+            }
             var clientInfo = new ClientInfo(req.body.name,  req.body.ip, req.body.port, req.body.registerInfo,req.body.isTestClient);
             messageHub.registerClient(clientInfo);
             res.json(Util.succeed(true));
@@ -43,6 +50,9 @@ export class MessageRest {
          * post body为ClientInfo
          */
         this.router.post('/updateRegisterInfo', function (req, res) {
+            if (!req.body.ip) {
+                req.body.ip = Util.getIPAddress();
+            }
             var clientInfo = new ClientInfo(req.body.name, req.body.ip, req.body.port, req.body.registerInfo,req.body.isTestClient);
             messageHub.updateClientInfo(clientInfo);
             res.json(Util.succeed(true));
@@ -78,7 +88,7 @@ export class MessageRest {
             console.log("ip:" + getRemoteIp(req));
             try {
                 let phoneSocket = socketIns.connections.filter(function (item) {
-                    return item.deviceNumber == req.body.deviceNumber;
+                    return item.deviceNumber == req.body.extandInfo.deviceNumber;
                 });
                 //回调phone客户端方法
                 if (phoneSocket && phoneSocket.length > 0) {

@@ -5,7 +5,6 @@
         <item url="file://$PROJECT_DIR$/seatnotice/WebsocketSocketioHost.js" />
         <item url="file://$PROJECT_DIR$/seatnotice/MesssageInfo.js" />
         <item url="file://$PROJECT_DIR$/seatnotice/ConnectionManager.js" />
-        <item url="file://$PROJECT_DIR$/seatnotice/PhoneConnInfo.js" />
         <item url="file://$PROJECT_DIR$/routes/StatusRest.js" />
         <item url="file://$PROJECT_DIR$/seatnotice/MessageType.js" />
         <item url="file://$PROJECT_DIR$/seatnotice/WebsocketNWHost.js" />
@@ -13,12 +12,12 @@
         <item url="file://$PROJECT_DIR$/seatnotice/ClientInfo.js" />
         <item url="file://$PROJECT_DIR$/seatnotice/MessageBody.js" />
         <item url="file://$PROJECT_DIR$/seatnotice/MessageFactory.js" />
+        <item url="file://$PROJECT_DIR$/seatnotice/Clients.js" />
+        <item url="file://$PROJECT_DIR$/seatnotice/PhoneConnInfo.js" />
         <item url="file://$PROJECT_DIR$/routes/MessageRest.js" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/seatnotice/PhoneConnInfo.js" />
-      <root url="file://$PROJECT_DIR$/routes/MessageRest.js" />
       <root url="file://$PROJECT_DIR$/seatnotice/WebsocketSocketioHost.js" />
       <root url="file://$PROJECT_DIR$/seatnotice/MesssageInfo.js" />
       <root url="file://$PROJECT_DIR$/seatnotice/ConnectionManager.js" />
@@ -29,6 +28,9 @@
       <root url="file://$PROJECT_DIR$/seatnotice/ClientInfo.js" />
       <root url="file://$PROJECT_DIR$/seatnotice/MessageBody.js" />
       <root url="file://$PROJECT_DIR$/seatnotice/MessageFactory.js" />
+      <root url="file://$PROJECT_DIR$/seatnotice/Clients.js" />
+      <root url="file://$PROJECT_DIR$/seatnotice/PhoneConnInfo.js" />
+      <root url="file://$PROJECT_DIR$/routes/MessageRest.js" />
     </CLASSES>
     <SOURCES />
   </library>
