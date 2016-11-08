@@ -77,16 +77,16 @@ java中ClientInfo、MessageInfo、TransferMessage、SeatStatus在com.gs.glink.co
 ### 4. c#客户端接受消息时的写法
 写法还是与之前一致，里面的WsConract和WsMethod对应上面写的   Hub 、Method 。
 ``` c#    
-[WsConract(Name = "IncidentBusinessNoticeHub")]
-    public class IncidentBusinessCallBack
+[WsConract(Name = "TestHub")]
+    public class CustomNCallBack
     {
-        #region 警情分派 正常接警保存 手动指派 快速接警 警情重分派消息通知
+        #region 
         /// <summary>
         /// 手动指派消息
         /// </summary>
         /// <param name="msgParams"></param>
-        [WsMethod(EventName = "SendIncidentApportionNotice")]
-        public void OnRecieveNoticeCallBack(AppealStorageParams msgParams)
+        [WsMethod(EventName = "CustomNotice1")]
+        public void OnRecieveNoticeCallBack(CustomParams msgParams)
         {
                 // TODO  .....
         }
@@ -96,8 +96,8 @@ java中ClientInfo、MessageInfo、TransferMessage、SeatStatus在com.gs.glink.co
         /// 快速接警消息
         /// </summary>
         /// <param name="msgParams"></param>
-        [WsMethod(EventName = "FastAppealUpdateStorageNotice")]
-        public void OnRecieveNoticeCallBack(FastAppealUpdateParams msgParams)
+        [WsMethod(EventName = "CustomNotice2")]
+        public void OnRecieveNoticeCallBack(CustomParams2 msgParams)
         {
                     // TODO ........
         } 
