@@ -1,8 +1,9 @@
 ## nodejs版本席位通知组件使用方式    
->  特点：  
-1. 完全的P2P版本，没有服务器。 
-2. 跨端，支持windows、linux。
-3. 使用nodejs为宿主。  使用了udp（p2p消息传递）、express rest服务（提供api供业务软件使用）、websocket（回调业务软件方法）  
+>  特点：    
+1. 完全的P2P版本，没有服务器。   
+2. 跨端，支持windows、linux。  
+3. 使用nodejs为宿主。  使用了udp（p2p消息传递）、express rest服务（提供api供业务软件使用）、websocket（回调业务软件方法）    
+
 
 
 ### 1.环境安装
@@ -44,7 +45,7 @@ linux：           \\172.18.3.26\共享资源\nodejs\node-v6.2.1-linux-x64.tar.x
             };
             bool rlt = await restRequest.PostAsync<MessageInfo<NewTestMessage>, bool>("message/sendMessage", msgInfo);  
 ```  
-c#中ClientInfo、MessageInfo、TransferMessage在Gs.CitySafety.Contracts.NoticeCore命名空间  
+ 
 
 ### 3. Java端调用方式（写法大致同上）
 ``` java  
@@ -71,7 +72,6 @@ c#中ClientInfo、MessageInfo、TransferMessage在Gs.CitySafety.Contracts.Notice
 
         boolean rlt = httpClientUtil.httpPost(url, msgInfo, boolean.class);
 ```    
-java中ClientInfo、MessageInfo、TransferMessage、SeatStatus在com.gs.glink.common.notice包下  
 
 
 ### 4. c#客户端接受消息时的写法
@@ -82,7 +82,7 @@ java中ClientInfo、MessageInfo、TransferMessage、SeatStatus在com.gs.glink.co
     {
         #region 
         /// <summary>
-        /// 手动指派消息
+        /// 业务消息1
         /// </summary>
         /// <param name="msgParams"></param>
         [WsMethod(EventName = "CustomNotice1")]
@@ -93,8 +93,8 @@ java中ClientInfo、MessageInfo、TransferMessage、SeatStatus在com.gs.glink.co
 
 
         /// <summary>
-        /// 快速接警消息
-        /// </summary>
+        /// 业务消息2
+        /// </summary>
         /// <param name="msgParams"></param>
         [WsMethod(EventName = "CustomNotice2")]
         public void OnRecieveNoticeCallBack(CustomParams2 msgParams)
