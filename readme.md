@@ -9,12 +9,12 @@
 ### 1.环境安装
 #### A、本地安装node  
 资源地址  ：  
- windows： \\172.18.3.26\共享资源\nodejs\node-v5.5.0-x64.msi  
-linux：           \\172.18.3.26\共享资源\nodejs\node-v6.2.1-linux-x64.tar.xz
+ windows： node-v5.5.0-x64.msi  
+linux：           node-v6.2.1-linux-x64.tar.xz
 默认选项安装完成  
 
 #### B、本地安装通知组件
-\\172.18.3.26\write\node-notice-local\NodeNoticeHost.rar  
+
 ##### windows 安装方法
  解压后，执行install-windows-service.bat  
 （卸载时，先停止服务，再执行uninstall-windows-service.bat）  
